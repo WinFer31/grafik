@@ -3,228 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>График Работы Димы</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
-    
+    <title>График Димы</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
-        /* Весь дизайн (CSS) будет прямо здесь */
-        
-        /* Стили, вдохновленные вашей картинкой */
         body {
-            font-family: 'Nunito', sans-serif;
-            /* Градиент неба */
-            background: linear-gradient(to bottom, #87CEEB 0%, #B2EBF2 100%);
-            display: grid;
-            place-items: center;
-            min-height: 100vh;
             margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
+            padding: 0;
+            background: linear-gradient(to bottom, #8EE7FF, #B4F7FF);
+            font-family: 'Nunito', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+            filter: blur(1px);
+            opacity: 0.8;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(30px); }
+            100% { transform: translateX(0); }
+        }
+
+        .sun {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 100px;
+            height: 100px;
+            background: #FFE066;
+            border-radius: 50%;
+            box-shadow: 0 0 30px #FFD54F;
         }
 
         .container {
-            background: #ffffff;
-            padding: 30px 40px;
-            border-radius: 20px;
-            /* Тень, как на блоках с картинки */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            padding: 25px;
+            border-radius: 25px;
+            width: 90%;
+            max-width: 420px;
             text-align: center;
-            max-width: 400px;
-            width: 100%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border: 4px solid #FFB6F0;
         }
 
         h1 {
-            /* Яркий "солнечный" оранжевый цвет */
-            color: #FFA500;
-            font-size: 2.5em; /* 2.5em = 40px, если базовый 16px */
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-            margin-top: 0;
-            margin-bottom: 20px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.3em;
+            color: #FF6EC7;
+            text-shadow: 2px 2px 0 #FFFFFF;
+            margin-bottom: 10px;
         }
 
-        p {
-            color: #555;
-            font-size: 1.1em;
-            margin-bottom: 25px;
+        .emoji {
+            font-size: 1.4em;
         }
 
-        /* Стилизуем инпут даты */
         input[type="date"] {
             width: 90%;
             padding: 12px;
-            font-family: 'Nunito', sans-serif;
             font-size: 1.1em;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-sizing: border-box; /* Чтобы padding не ломал ширину */
+            border-radius: 12px;
+            border: 3px solid #FFD1EF;
+            margin-top: 10px;
         }
 
-        /* Стилизуем кнопку */
         button {
-            background-color: #32CD32; /* Ярко-зеленый */
-            color: white;
-            font-family: 'Nunito', sans-serif;
+            margin-top: 15px;
+            background: #6EEB83;
+            color: #fff;
+            padding: 14px 28px;
             font-size: 1.2em;
-            font-weight: 700;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
+            border-radius: 12px;
+            font-family: 'Fredoka One', cursive;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.1s ease;
+            transition: 0.3s;
         }
 
         button:hover {
-            background-color: #28a745; /* Чуть темнее при наведении */
-        }
-        
-        button:active {
-            transform: scale(0.98); /* Эффект нажатия */
+            background: #4CD96C;
+            transform: scale(1.05);
         }
 
-        /* Зона для результата */
         #result {
-            margin-top: 30px;
-            padding: 20px;
-            border-radius: 10px;
-            font-size: 1.3em;
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 1.2em;
             font-weight: 700;
-            /* Скрыт по умолчанию, будет появляться */
-            display: none; 
+            display: none;
         }
 
-        /* Классы, которые мы будем добавлять через JS */
         .free {
-            background: #E0F8E0; /* Светло-зеленый фон */
-            color: #28a745;      /* Темно-зеленый текст */
-            display: block !important;
+            background: #C7FFCE;
+            color: #2E8B57;
         }
 
         .busy {
-            background: #F8E0E0; /* Светло-красный фон */
-            color: #d9534f;      /* Темно-красный текст */
-            display: block !important;
+            background: #FFD1D1;
+            color: #D9534F;
         }
     </style>
 </head>
 <body>
+    <div class="sun"></div>
+    <div class="cloud" style="width:120px;height:50px;top:60px;left:20px;"></div>
+    <div class="cloud" style="width:90px;height:40px;top:150px;right:40px;"></div>
 
     <div class="container">
-        <h1>☀️ График Димы 🐝</h1>
-        <p>Привет! Введи дату, чтобы проверить, свободен ли я:</p>
-        
+        <h1>График Димы <span class="emoji">🎨🐝</span></h1>
+        <p>Выбери день, и я скажу — дома я или на вахте!</p>
+
         <input type="date" id="date-input">
         <button onclick="checkDate()">Проверить!</button>
-        
+
         <div id="result"></div>
     </div>
 
     <script>
-        // Вся логика (JavaScript) будет прямо здесь
+        const START_YEAR = 2026;
 
-        // --- ❗️ ВАЖНО: НАСТРОЙКА ГРАФИКА ---
-        // Поставьте тот год, в котором 12 января у вас НАЧАЛАСЬ первая вахта
-        const START_YEAR = 2026; 
-        // ---
+        const first_shift_start = new Date(Date.UTC(START_YEAR, 0, 12));
 
-        // --- ЛОГИКА РАСЧЕТА (порт с Python) ---
-
-        // JS работает с датами немного иначе. Мы будем использовать UTC 
-        // для избежания проблем с часовыми поясами.
-        // Месяцы в JS считаются с 0 (Январь = 0, Февраль = 1...)
-        
-        const first_shift_start = new Date(Date.UTC(START_YEAR, 0, 12)); // 12 Января
-
-        // Функция для добавления дней к дате (возвращает новую дату)
         function addDays(date, days) {
             const result = new Date(date);
             result.setUTCDate(result.getUTCDate() + days);
             return result;
         }
-        
-        // Функция для расчета разницы в днях
+
         function getDaysDiff(date1, date2) {
-            const oneDay = 1000 * 60 * 60 * 24; // мс в одном дне
-            // Мы отсекаем время, используя .getTime()
+            const oneDay = 1000 * 60 * 60 * 24;
             const diffMs = date2.getTime() - date1.getTime();
             return Math.floor(diffMs / oneDay);
         }
 
-        // 1. Определяем ключевые даты
         const first_shift_duration = 14;
         const first_break_duration = 21;
-        
-        // Дата окончания первой вахты (и начала первого отдыха)
-        const first_shift_end = addDays(first_shift_start, first_shift_duration); // 26 Января
-        
-        // Дата окончания первого отдыха (и начала нормального графика)
-        const normal_cycle_start = addDays(first_shift_end, first_break_duration); // 16 Февраля
 
-        // 2. Параметры нормального цикла (28/28)
+        const first_shift_end = addDays(first_shift_start, first_shift_duration);
+        const normal_cycle_start = addDays(first_shift_end, first_break_duration);
+
         const normal_shift_days = 28;
         const normal_break_days = 28;
-        const normal_total_cycle_days = normal_shift_days + normal_break_days; // 56 дней
+        const normal_total_cycle_days = 56;
 
         function getDimaStatus(targetDate) {
-            // 0. Проверка: Дата до начала первой вахты
             if (targetDate < first_shift_start) {
-                return { status: "free", text: "Я еще не начал работать по этому графику (до 12.01)" };
+                return { status: "free", text: "Ещё дома! График начнётся 12 января 🌟" };
             }
 
-            // 1. Проверка: Первая вахта (14 дней)
             if (targetDate < first_shift_end) {
                 const days_in = getDaysDiff(first_shift_start, targetDate) + 1;
-                return { status: "busy", text: `Я НА ВАХТЕ (Первая вахта, ${days_in}-й день)` };
+                return { status: "busy", text: `Первая вахта! Сегодня ${days_in}-й день 👷‍♂️` };
             }
 
-            // 2. Проверка: Первый отдых (21 день)
             if (targetDate < normal_cycle_start) {
                 const days_in = getDaysDiff(first_shift_end, targetDate) + 1;
-                return { status: "free", text: `Я ДОМА! (Первый отдых, ${days_in}-й день)` };
+                return { status: "free", text: `Первый отдых! Дома уже ${days_in} дней 🏡` };
             }
 
-            // 3. Проверка: Нормальный график (28/28)
-            const days_since_normal_cycle_start = getDaysDiff(normal_cycle_start, targetDate);
-            const day_in_cycle = days_since_normal_cycle_start % normal_total_cycle_days;
+            const days_since_start = getDaysDiff(normal_cycle_start, targetDate);
+            const day_in_cycle = days_since_start % normal_total_cycle_days;
 
             if (day_in_cycle < normal_shift_days) {
-                // Если день в цикле 0-27, это работа
                 const day_num = day_in_cycle + 1;
-                return { status: "busy", text: `Я НА ВАХТЕ (График 28/28, ${day_num}-й день)` };
+                return { status: "busy", text: `На вахте! ${day_num}-й день по графику 28/28 🚧` };
             } else {
-                // Если день в цикле 28-55, это отдых
                 const day_num = day_in_cycle - normal_shift_days + 1;
-                return { status: "free", text: `Я ДОМА! (График 28/28, ${day_num}-й день отдыха)` };
+                return { status: "free", text: `Дома! Отдых ${day_num}-й день 😊` };
             }
         }
 
-        // --- Главная функция, которую вызывает кнопка ---
-
         function checkDate() {
-            const dateInputElement = document.getElementById('date-input');
-            const resultElement = document.getElementById('result');
+            const input = document.getElementById('date-input');
+            const result = document.getElementById('result');
 
-            if (!dateInputElement.value) {
-                // Если дата не выбрана
-                resultElement.textContent = "Пожалуйста, выбери дату!";
-                resultElement.className = 'busy'; // Используем красный стиль для ошибки
-                resultElement.style.display = 'block';
+            if (!input.value) {
+                result.textContent = "Выбери дату!";
+                result.className = "busy";
+                result.style.display = "block";
                 return;
             }
 
-            // Преобразуем строку 'YYYY-MM-DD' в объект Date в UTC
-            const dateParts = dateInputElement.value.split('-').map(part => parseInt(part, 10));
-            // new Date(Date.UTC(год, месяц-1, день))
-            const targetDate = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
+            const parts = input.value.split('-').map(Number);
+            const targetDate = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
 
-            const result = getDimaStatus(targetDate);
-
-            // Показываем результат
-            resultElement.textContent = result.text;
-            // Меняем класс для смены цвета
-            resultElement.className = result.status; // 'free' или 'busy'
+            const res = getDimaStatus(targetDate);
+            result.textContent = res.text;
+            result.className = res.status;
+            result.style.display = "block";
         }
-
     </script>
 </body>
 </html>
