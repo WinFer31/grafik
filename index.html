@@ -190,4 +190,29 @@
                 }
             }
             
-            return { status: "free", text: "С
+            return { status: "free", text: "Свободен" };
+        }
+
+        function checkDate() {
+            const input = document.getElementById('date-input');
+            const result = document.getElementById('result');
+
+            if (!input.value) {
+                result.textContent = "Выбери дату!";
+                result.className = "busy";
+                result.style.display = "block";
+                return;
+            }
+
+            const parts = input.value.split('-').map(Number);
+            // Construct UTC date from input to match our schedule logic
+            const targetDate = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+
+            const res = getDimaStatus(targetDate);
+            result.textContent = res.text;
+            result.className = res.status;
+            result.style.display = "block";
+        }
+    </script>
+</body>
+</html>
