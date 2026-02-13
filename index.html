@@ -1,208 +1,380 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>График Димы</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>My Shift Calendar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1: #8EE7FF;
+      --bg2: #B4F7FF;
+      --card-bg: #ffffff;
+      --accent: #FF6EC7;
+      --border: #E6E6E6;
+      --work: #C7FFCE;
+      --work-text: #2E8B57;
+      --rest: #F3F6F8;
+      --rest-text: #333;
+    }
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(to bottom, #8EE7FF, #B4F7FF);
-            font-family: 'Nunito', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:'Nunito',sans-serif;
+      background: linear-gradient(180deg,var(--bg1),var(--bg2));
+      padding:24px;
+    }
 
-        .cloud {
-            position: absolute;
-            background: white;
-            border-radius: 50px;
-            filter: blur(1px);
-            opacity: 0.8;
-            animation: float 10s infinite ease-in-out;
-        }
+    .sun{position:absolute;top:18px;right:18px;width:96px;height:96px;border-radius:50%;background:#FFE066;box-shadow:0 0 30px #FFD54F}
+    .cloud{position:absolute;background:#fff;border-radius:50px;filter:blur(1px);opacity:.85;animation:float 9s infinite ease-in-out}
+    @keyframes float{0%{transform:translateX(0)}50%{transform:translateX(28px)}100%{transform:translateX(0)}}
 
-        @keyframes float {
-            0% { transform: translateX(0); }
-            50% { transform: translateX(30px); }
-            100% { transform: translateX(0); }
-        }
+    .app {
+      width:100%;
+      max-width:1100px;
+      background:var(--card-bg);
+      border-radius:16px;
+      padding:18px;
+      box-shadow:0 12px 36px rgba(0,0,0,0.12);
+      border:4px solid rgba(255,182,240,0.25);
+    }
 
-        .sun {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 100px;
-            height: 100px;
-            background: #FFE066;
-            border-radius: 50%;
-            box-shadow: 0 0 30px #FFD54F;
-        }
+    .header{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+      flex-wrap:wrap;
+    }
+    h1{
+      font-family:'Fredoka One',cursive;
+      margin:0;
+      color:var(--accent);
+      font-size:1.6rem;
+    }
+    p.lead{margin:0;color:#555}
 
-        .container {
-            background: #fff;
-            padding: 25px;
-            border-radius: 25px;
-            width: 90%;
-            max-width: 420px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            border: 4px solid #FFB6F0;
-        }
+    .controls{
+      margin-top:12px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .control{
+      background:#fff;
+      padding:10px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      display:flex;
+      gap:8px;
+      align-items:center;
+      font-size:0.95rem;
+    }
+    .control label{font-size:0.85rem;color:#666;margin-right:6px}
+    .control input[type="date"], .control input[type="number"], .control select{
+      padding:6px 8px;
+      border-radius:8px;
+      border:1px solid #ddd;
+      font-size:0.95rem;
+      width:140px;
+    }
+    .control input[type="number"]{width:84px}
 
-        h1 {
-            font-family: 'Fredoka One', cursive;
-            font-size: 2.3em;
-            color: #FF6EC7;
-            text-shadow: 2px 2px 0 #FFFFFF;
-            margin-bottom: 10px;
-        }
+    .actions{margin-left:auto; display:flex; gap:8px}
+    button {
+      background:#6EEB83;
+      color:#fff;
+      border:none;
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:700;
+      font-family:'Fredoka One',cursive;
+    }
+    button.secondary{background:#FFD1D1;color:#8B1E1E;font-family:Nunito;font-weight:700}
+    button:active{transform:translateY(1px)}
 
-        .emoji {
-            font-size: 1.4em;
-        }
+    #calendar-wrap{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap:12px;
+    }
 
-        input[type="date"] {
-            width: 90%;
-            padding: 12px;
-            font-size: 1.1em;
-            border-radius: 12px;
-            border: 3px solid #FFD1EF;
-            margin-top: 10px;
-        }
+    .month {
+      border:1px solid var(--border);
+      padding:8px;
+      border-radius:8px;
+      background:linear-gradient(180deg,#fff,#fafafa);
+    }
+    .month-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:6px;
+    }
+    .month-title{font-weight:700;font-size:0.95rem;color:#222}
+    .weekday-row, .days-grid{
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap:2px;
+      font-size:0.85rem;
+    }
+    .weekday{
+      text-align:center;
+      padding:6px 4px;
+      background:#EFF3F6;
+      border-radius:6px;
+      font-weight:700;
+      color:#333;
+    }
+    .day-cell{
+      min-height:30px;
+      padding:6px 4px;
+      border-radius:6px;
+      text-align:center;
+      line-height:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:600;
+    }
+    .day-cell.empty{background:transparent;color:transparent}
+    .day-cell.work{background:var(--work); color:var(--work-text); border:1px solid #C9F6BE}
+    .day-cell.rest{background:var(--rest); color:var(--rest-text); border:1px solid #f0f0f0}
 
-        button {
-            margin-top: 15px;
-            background: #6EEB83;
-            color: #fff;
-            padding: 14px 28px;
-            font-size: 1.2em;
-            border: none;
-            border-radius: 12px;
-            font-family: 'Fredoka One', cursive;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+    /* responsive */
+    @media (max-width:560px){
+      .control input[type="date"]{width:120px}
+      .control{padding:8px}
+      .month{padding:6px}
+      .day-cell{min-height:26px;padding:4px}
+    }
 
-        button:hover {
-            background: #4CD96C;
-            transform: scale(1.05);
-        }
-
-        #result {
-            margin-top: 20px;
-            padding: 18px;
-            border-radius: 12px;
-            font-size: 1.2em;
-            font-weight: 700;
-            display: none;
-        }
-
-        .free {
-            background: #C7FFCE;
-            color: #2E8B57;
-        }
-
-        .busy {
-            background: #FFD1D1;
-            color: #D9534F;
-        }
-    </style>
+    .legend{
+      margin-top:10px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .legend .item{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      font-size:0.9rem;
+      color:#333;
+    }
+    .swatch{width:18px;height:18px;border-radius:4px;border:1px solid #ddd}
+  </style>
 </head>
 <body>
-    <div class="sun"></div>
-    <div class="cloud" style="width:120px;height:50px;top:60px;left:20px;"></div>
-    <div class="cloud" style="width:90px;height:40px;top:150px;right:40px;"></div>
+  <div class="sun"></div>
+  <div class="cloud" style="width:120px;height:50px;top:60px;left:18px"></div>
+  <div class="cloud" style="width:90px;height:40px;top:150px;right:40px"></div>
 
-    <div class="container">
-        <h1>График Димы <span class="emoji">🎨🐝</span></h1>
-        <p>Выбери день, и я скажу — дома я или на вахте!</p>
+  <div class="app" role="main" aria-label="Shift calendar generator">
+    <div class="header">
+      <div>
+        <h1>My Shift Calendar</h1>
+        <p class="lead">Set your new schedule and generate a highlighted 12-month view.</p>
+      </div>
 
-        <input type="date" id="date-input">
-        <button onclick="checkDate()">Проверить!</button>
+      <div class="controls" aria-hidden="false">
+        <div class="control">
+          <label for="start-date">Start date</label>
+          <input id="start-date" type="date" value="2026-01-12">
+        </div>
 
-        <div id="result"></div>
+        <div class="control">
+          <label for="first-shift">Initial shift (days)</label>
+          <input id="first-shift" type="number" min="1" value="18">
+        </div>
+
+        <div class="control">
+          <label for="first-break">Initial break (days)</label>
+          <input id="first-break" type="number" min="0" value="21">
+        </div>
+
+        <div class="control">
+          <label for="shift-days">Cycle shift</label>
+          <input id="shift-days" type="number" min="1" value="28">
+        </div>
+
+        <div class="control">
+          <label for="break-days">Cycle break</label>
+          <input id="break-days" type="number" min="0" value="28">
+        </div>
+
+        <div class="control">
+          <label for="year-select">Year</label>
+          <select id="year-select"></select>
+        </div>
+
+        <div class="actions" style="margin-left:6px">
+          <button id="generate">Generate calendar</button>
+          <button id="reset" class="secondary" title="Reset to defaults">Reset</button>
+        </div>
+      </div>
     </div>
 
-    <script>
-        const START_YEAR = 2026;
+    <div class="legend">
+      <div class="item"><span class="swatch" style="background:var(--work);border:1px solid #C9F6BE"></span> Working day</div>
+      <div class="item"><span class="swatch" style="background:var(--rest);border:1px solid #eee"></span> Off / Rest day</div>
+    </div>
 
-        const first_shift_start = new Date(Date.UTC(START_YEAR, 0, 12));
+    <div id="calendar-wrap" aria-live="polite"></div>
+  </div>
 
-        function addDays(date, days) {
-            const result = new Date(date);
-            result.setUTCDate(result.getUTCDate() + days);
-            return result;
+  <script>
+    // helpers (UTC-safe)
+    function utcDate(y,m,d){ return new Date(Date.UTC(y,m,d)); }
+    function addDaysUTC(date, days){
+      const r = new Date(date.getTime());
+      r.setUTCDate(r.getUTCDate() + days);
+      return r;
+    }
+    function daysDiffUTC(a,b){
+      const msDay = 24*60*60*1000;
+      return Math.floor((Date.UTC(b.getUTCFullYear(), b.getUTCMonth(), b.getUTCDate()) - Date.UTC(a.getUTCFullYear(), a.getUTCMonth(), a.getUTCDate())) / msDay);
+    }
+
+    // UI elements
+    const startDateInput = document.getElementById('start-date');
+    const firstShiftInput = document.getElementById('first-shift');
+    const firstBreakInput = document.getElementById('first-break');
+    const shiftDaysInput = document.getElementById('shift-days');
+    const breakDaysInput = document.getElementById('break-days');
+    const yearSelect = document.getElementById('year-select');
+    const generateBtn = document.getElementById('generate');
+    const resetBtn = document.getElementById('reset');
+    const calendarWrap = document.getElementById('calendar-wrap');
+
+    // populate year select with this year ± 2
+    const now = new Date();
+    const thisYear = now.getUTCFullYear();
+    for(let y = thisYear-1; y <= thisYear+2; y++){
+      const opt = document.createElement('option'); opt.value = y; opt.textContent = y;
+      if(y === 2026) opt.selected = true; // default focus year 2026 as in your previous file
+      yearSelect.appendChild(opt);
+    }
+
+    function getStatusForDate(target, startDate, firstShiftLen, firstBreakLen, cycleShift, cycleBreak){
+      // returns true if working, false if resting
+      // startDate: UTC date object
+      if(target < startDate) return false;
+      const firstShiftEnd = addDaysUTC(startDate, firstShiftLen - 1); // inclusive
+      if(target <= firstShiftEnd) return true;
+
+      const afterFirstShift = addDaysUTC(firstShiftEnd, 1);
+      const firstBreakEnd = addDaysUTC(afterFirstShift, firstBreakLen - 1);
+      if(target <= firstBreakEnd) return false;
+
+      const cycleStart = addDaysUTC(firstBreakEnd, 1);
+      const cycleLen = cycleShift + cycleBreak;
+      const daysSince = daysDiffUTC(cycleStart, target);
+      const dayInCycle = ((daysSince % cycleLen) + cycleLen) % cycleLen; // safe
+      return dayInCycle < cycleShift;
+    }
+
+    function renderCalendarForYear(year, params){
+      calendarWrap.innerHTML = '';
+      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const weekdays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+      for(let m=0;m<12;m++){
+        const monthEl = document.createElement('div'); monthEl.className = 'month';
+        const header = document.createElement('div'); header.className='month-header';
+        const title = document.createElement('div'); title.className='month-title';
+        title.textContent = monthNames[m] + ' ' + year;
+        header.appendChild(title);
+
+        const monthBody = document.createElement('div');
+
+        const weekdaysRow = document.createElement('div'); weekdaysRow.className='weekday-row';
+        weekdays.forEach(w => {
+          const wd = document.createElement('div'); wd.className='weekday'; wd.textContent = w;
+          weekdaysRow.appendChild(wd);
+        });
+
+        const daysGrid = document.createElement('div'); daysGrid.className='days-grid';
+
+        // find first day of month and number of days
+        const firstOfMonth = utcDate(year,m,1);
+        const daysInMonth = new Date(Date.UTC(year,m+1,0)).getUTCDate();
+        // weekday index Monday=0..Sunday=6
+        const jsDay = firstOfMonth.getUTCDay(); // 0=Sun .. 6=Sat
+        const mondayIndex = (jsDay === 0) ? 6 : jsDay - 1; // shift so Mon=0
+
+        // add empty cells for leading days
+        for(let e=0;e<mondayIndex;e++){
+          const empty = document.createElement('div'); empty.className='day-cell empty'; empty.innerHTML='&nbsp;';
+          daysGrid.appendChild(empty);
         }
 
-        function getDaysDiff(date1, date2) {
-            const oneDay = 1000 * 60 * 60 * 24;
-            const diffMs = date2.getTime() - date1.getTime();
-            return Math.floor(diffMs / oneDay);
+        for(let d=1; d<=daysInMonth; d++){
+          const dayDate = utcDate(year,m,d);
+          const isWork = getStatusForDate(dayDate, params.startDate, params.firstShiftLen, params.firstBreakLen, params.cycleShift, params.cycleBreak);
+          const cell = document.createElement('div');
+          cell.className = 'day-cell ' + (isWork ? 'work' : 'rest');
+          cell.textContent = d;
+          daysGrid.appendChild(cell);
         }
 
-        const first_shift_duration = 18;
-        const first_break_duration = 21;
+        // append to monthEl
+        monthEl.appendChild(header);
+        monthEl.appendChild(weekdaysRow);
+        monthEl.appendChild(daysGrid);
+        calendarWrap.appendChild(monthEl);
+      }
+    }
 
-        const first_shift_end = addDays(first_shift_start, first_shift_duration);
-        const normal_cycle_start = addDays(first_shift_end, first_break_duration);
+    function readParams(){
+      const sdParts = startDateInput.value.split('-').map(Number);
+      const startDate = sdParts.length === 3 ? utcDate(sdParts[0], sdParts[1]-1, sdParts[2]) : utcDate(2026,0,12);
+      return {
+        startDate,
+        firstShiftLen: Math.max(1, parseInt(firstShiftInput.value || 18,10)),
+        firstBreakLen: Math.max(0, parseInt(firstBreakInput.value || 21,10)),
+        cycleShift: Math.max(1, parseInt(shiftDaysInput.value || 28,10)),
+        cycleBreak: Math.max(0, parseInt(breakDaysInput.value || 28,10))
+      };
+    }
 
-        const normal_shift_days = 28;
-        const normal_break_days = 28;
-        const normal_total_cycle_days = 56;
+    generateBtn.addEventListener('click', ()=>{
+      const year = parseInt(yearSelect.value,10);
+      const params = readParams();
+      renderCalendarForYear(year, params);
+    });
 
-        function getDimaStatus(targetDate) {
-            if (targetDate < first_shift_start) {
-                return { status: "free", text: "Ещё дома! График начнётся 12 января 🌟" };
-            }
+    resetBtn.addEventListener('click', ()=>{
+      // reset to defaults used earlier
+      startDateInput.value = '2026-01-12';
+      firstShiftInput.value = '18';
+      firstBreakInput.value = '21';
+      shiftDaysInput.value = '28';
+      breakDaysInput.value = '28';
+      yearSelect.value = '2026';
+      generateBtn.click();
+    });
 
-            if (targetDate < first_shift_end) {
-                const days_in = getDaysDiff(first_shift_start, targetDate) + 1;
-                return { status: "busy", text: `Первая вахта! Сегодня ${days_in}-й день 👷‍♂️` };
-            }
-
-            if (targetDate < normal_cycle_start) {
-                const days_in = getDaysDiff(first_shift_end, targetDate) + 1;
-                return { status: "free", text: `Первый отдых! Дома уже ${days_in} дней 🏡` };
-            }
-
-            const days_since_start = getDaysDiff(normal_cycle_start, targetDate);
-            const day_in_cycle = days_since_start % normal_total_cycle_days;
-
-            if (day_in_cycle < normal_shift_days) {
-                const day_num = day_in_cycle + 1;
-                return { status: "busy", text: `На вахте! ${day_num}-й день по графику 28/28 🚧` };
-            } else {
-                const day_num = day_in_cycle - normal_shift_days + 1;
-                return { status: "free", text: `Дома! Отдых ${day_num}-й день 😊` };
-            }
-        }
-
-        function checkDate() {
-            const input = document.getElementById('date-input');
-            const result = document.getElementById('result');
-
-            if (!input.value) {
-                result.textContent = "Выбери дату!";
-                result.className = "busy";
-                result.style.display = "block";
-                return;
-            }
-
-            const parts = input.value.split('-').map(Number);
-            const targetDate = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-
-            const res = getDimaStatus(targetDate);
-            result.textContent = res.text;
-            result.className = res.status;
-            result.style.display = "block";
-        }
-    </script>
+    // initial render
+    document.addEventListener('DOMContentLoaded', ()=>{
+      // if start-date empty, fill default
+      if(!startDateInput.value) startDateInput.value = '2026-01-12';
+      if(!firstShiftInput.value) firstShiftInput.value='18';
+      if(!firstBreakInput.value) firstBreakInput.value='21';
+      if(!shiftDaysInput.value) shiftDaysInput.value='28';
+      if(!breakDaysInput.value) breakDaysInput.value='28';
+      if(!yearSelect.value) yearSelect.value = '2026';
+      generateBtn.click();
+    });
+  </script>
 </body>
 </html>
